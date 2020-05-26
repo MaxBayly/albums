@@ -1,0 +1,11 @@
+{
+  "name": "albums",
+  "version": "0.0.1",
+  "description": "An album-based music library browser and player for MPD",
+  "main": "index.js",
+  "scripts": {
+    "start": "node ."
+  },
+  "author": "Max Bayly",
+  "license": "GPL-3.0-or-later"
+}
