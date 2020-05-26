@@ -2,13 +2,15 @@
   "name": "albums",
   "version": "0.0.1",
   "description": "An album-based music library browser and player for MPD",
-  "main": "index.js",
+  "main": "main.js",
   "scripts": {
-    "start": "node ."
+    "start": "electron . --allow-file-access-from-files"
   },
   "author": "Max Bayly",
   "license": "GPL-3.0-or-later",
   "dependencies": {
-    "electron": "^9.0.0"
+    "electron": "^9.0.0",
+    "electron-reload": "^1.5.0",
+    "jsmediatags": "^3.9.3"
   }
 }
