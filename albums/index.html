@@ -5,11 +5,32 @@
     <title>Hello World!</title>
     <!-- https://electronjs.org/docs/tutorial/security#csp-meta-tag -->
 	<meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline';" />
-	<script src="scripts.js"></script>
+  <script src="scripts.js"></script>
+  <script>
+    const { ipcRenderer } = require('electron')
+
+    // console.log(ipcRenderer)
+
+    // var testString = ipcRenderer.sendSync('synchronous-message', 'TESTARG');
+
+    // console.log(testString);
+
+    ipcRenderer.send('asynchronous-message', 'ping')
+
+    ipcRenderer.on('asynchronous-reply', (event, arg) => {
+        console.log(arg);
+        //displayImage(arg);
+        document.getElementById("itemPreview").src = "data:image/jpeg;base64,"+ arg
+        var innerString = "data:image/jpeg;base64," + arg
+        document.getElementById("itemPreview").innerHTML += "<img src=" + innerString + ">"
+
+    })
+    
+  </script>
   </head>
-  <body>
-   <img id="itemPreview" src="">
-   <button type="button" onclick="displayTestImage()">read tags</button>
+  <body id="itemPreview">
+   <!-- <img id="itemPreview" src=""> -->
+   <!-- <button type="button" onclick="displayTestImage()">read tags</button> -->
 
 	
   </body>

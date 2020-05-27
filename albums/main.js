@@ -1,5 +1,7 @@
 const scripts = require('./scripts')
-const { app, BrowserWindow } = require('electron')
+const { app, BrowserWindow, webContents, ipcMain } = require('electron')
+
+
 
 require('electron-reload')(__dirname);
 
@@ -17,8 +19,10 @@ function createWindow () {
   // and load the index.html of the app.
   win.loadFile('index.html')
 
+  //windowReady(win);
+
   // Open the DevTools.
-  //win.webContents.openDevTools()
+  win.webContents.openDevTools()
 }
 
 // This method will be called when Electron has finished
@@ -46,3 +50,33 @@ app.on('activate', () => {
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.
 //let test = scripts.readTags()
+
+
+
+async function windowReady(window) {
+  let datastring = await scripts.displayTestImage();
+  //console.log(datastring)
+  console.log("TESTING")
+  //window.loadFile('test.html')
+  return datastring
+}
+
+async function getTestDataString() {
+  var datastring = await scripts.displayTestImage();
+  console.log(typeof(datastring))
+  return datastring;
+}
+
+// ipcMain.on('synchronous-message', (event, arg) => {
+//   console.log(arg);
+//   datastring = getTestDataString()
+//   console.log(datastring)
+//   event.returnValue = "teststring"
+// })
+
+ipcMain.on('asynchronous-message', async (event, arg) => {
+  console.log(arg);
+  var datastring = await getTestDataString();
+  console.log(datastring)
+  event.reply('asynchronous-reply', datastring);
+})

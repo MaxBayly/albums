@@ -14,18 +14,38 @@
 // 	}
 // }
 
-async function displayTestImage(){
-	var filename = "/mass/medix/Music/The Dear Hunter/Act IV_ Rebirth in Reprise/01 Rebirth.flac"
+
+
+
+module.exports = {
+	displayTestImage: async function (){
+	var filename = "/mass/medix/Music/TesseracT/Sonder/01 Luminary.mp3"
 	var tag = await readTags(filename);
 	
-	console.log("display");
-	console.log(tag);
-	console.log("WTF");
+	//console.log("display");
+	//console.log(tag);
+	//console.log("WTF");
 	var imageDataString = extractImage(tag);
-	console.log("BETWEEN");
+	//console.log("BETWEEN");
 	displayImage(imageDataString);
-	console.log("END");
+	//console.log("END");
+	return imageDataString;
 }
+}
+
+// async function displayTestImage(){
+// 	var filename = "/mass/medix/Music/TesseracT/Sonder/01 Luminary.mp3"
+// 	var tag = await readTags(filename);
+	
+// 	//console.log("display");
+// 	//console.log(tag);
+// 	//console.log("WTF");
+// 	var imageDataString = extractImage(tag);
+// 	//console.log("BETWEEN");
+// 	displayImage(imageDataString);
+// 	//console.log("END");
+// 	return true;
+// }
 
 async function readTags(filename) {
 	var jsmediatags = require("jsmediatags");
@@ -33,8 +53,8 @@ async function readTags(filename) {
 	return new Promise(function(resolve, reject) {
 		jsmediatags.read(filename, {
 			onSuccess: function(tag) {
-				console.log("read")
-				console.log(tag)
+				//console.log("read")
+				//console.log(tag)
 				resolve(tag)
 				
 			},
@@ -51,12 +71,12 @@ async function readTags(filename) {
 function extractImage(tag) {
 	var img = tag.tags.picture
 	var datastring = _arrayBufferToBase64(img.data)
-	console.log(datastring)
+	//console.log(datastring)
 	return datastring
 }
 
 function displayImage(datastring) {
-	document.getElementById("itemPreview").src = "data:image/jpeg;base64,"+ datastring
+	//document.getElementById("itemPreview").src = "data:image/jpeg;base64,"+ datastring
 }
 
 function _arrayBufferToBase64( buffer ) {
@@ -69,3 +89,4 @@ function _arrayBufferToBase64( buffer ) {
 	//return window.btoa( binary );
 	return Buffer.from(buffer).toString('base64')
 }
+
