@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <title>Hello World!</title>
     <!-- https://electronjs.org/docs/tutorial/security#csp-meta-tag -->
-	<meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline';" />
+  <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline';" />
+  <link rel="stylesheet" href="styles.css">
   <script src="scripts.js"></script>
   <script>
     const { ipcRenderer } = require('electron')
@@ -20,18 +21,21 @@
     ipcRenderer.on('asynchronous-reply', (event, arg) => {
         console.log(arg);
         //displayImage(arg);
-        document.getElementById("itemPreview").src = "data:image/jpeg;base64,"+ arg
-        var innerString = "data:image/jpeg;base64," + arg
-        document.getElementById("itemPreview").innerHTML += "<img src=" + innerString + ">"
+        // document.getElementById("itemPreview").src = "data:image/jpeg;base64,"+ arg[0]
+        // for(var i = 0; i < arg.length; i++){
+        //   var innerString = "data:image/jpeg;base64," + arg[i]
+        //   document.getElementById("itemPreview").innerHTML += "<img src=" + innerString + ">"
+        //   console.log("Next image... ")
+        // }
+        document.getElementById("albumGrid").innerHTML = arg
 
     })
     
   </script>
   </head>
-  <body id="itemPreview">
-   <!-- <img id="itemPreview" src=""> -->
-   <!-- <button type="button" onclick="displayTestImage()">read tags</button> -->
+  <body>
+    <div class="albumGrid" id="albumGrid">
 
-	
+    </div>	
   </body>
 </html>

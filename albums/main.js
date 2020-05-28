@@ -23,6 +23,8 @@ function createWindow () {
 
   // Open the DevTools.
   win.webContents.openDevTools()
+
+  win.removeMenu()
 }
 
 // This method will be called when Electron has finished
@@ -63,7 +65,7 @@ async function windowReady(window) {
 
 async function getTestDataString() {
   var datastring = await scripts.displayTestImage();
-  console.log(typeof(datastring))
+  //console.log(typeof(datastring))
   return datastring;
 }
 
@@ -75,8 +77,31 @@ async function getTestDataString() {
 // })
 
 ipcMain.on('asynchronous-message', async (event, arg) => {
-  console.log(arg);
+  let datastrings = [];
   var datastring = await getTestDataString();
-  console.log(datastring)
-  event.reply('asynchronous-reply', datastring);
+  datastrings.push(datastring);
+  datastring = await scripts.getImageDataString('/mass/medix/Music/TesseracT/Polaris/01 Dystopia.mp3');
+  datastrings.push(datastring);
+
+  var tags = await scripts.traverseDirectories();
+  var html = ""
+  for (tag of tags) {
+    var innerString = "data:image/jpeg;base64," + tag;
+    var imageHTML = '<div class="albumDiv"><img id="album" class="albumContainer" src=' + innerString + "></div>"
+    html += imageHTML
+  }
+  //tags.pop()
+  // console.log("THESE ARE THE TAGS")
+  // for (const tag of tags){
+  //   console.log(tag)
+  // }
+
+  // console.log("FIRTST TAG")
+  // console.log(tags[0])
+  // console.log("LAST TAG")
+  // console.log(tags[tags.length-1])
+  // console.log("AND WE'RE DONE")
+  
+  
+  event.reply('asynchronous-reply', html);
 })
