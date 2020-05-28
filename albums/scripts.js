@@ -20,7 +20,7 @@ const dummystring = "/9j/4AAQSkZJRgABAQEAAQABAAD/4QAYRXhpZgAASUkqAAgAAAAAAAAAAAA
 
 module.exports = {
 	displayTestImage: async function (){
-	var filename = "/mass/medix/Music/TesseracT/Sonder/01 Luminary.mp3"
+	var filename = "/mass/medix/Music/Porcupine Tree/Fear of a Blank Planet/01 Fear of a Blank Planet.flac"
 	var tag = await readTags(filename);
 	
 	//console.log("display");
@@ -77,7 +77,7 @@ module.exports = {
 				var firstSong;
 				var songFound = false;
 				for (song of songs) {
-					if (song.charAt(0) != "." && song.substr(song.indexOf('.') != ".jpg") && song.substr(song.indexOf('.')) != ".aiff" && song.substr(song.indexOf('.')) != ".aif") {
+					if (song.charAt(0) != "." && song.substr(song.indexOf('.') != ".jpg") && song.substr(song.indexOf('.') != ".png") && song.substr(song.indexOf('.')) != ".aiff" && song.substr(song.indexOf('.')) != ".aif") {
 						firstSong = song;
 						songFound = true;
 						break;
@@ -86,7 +86,7 @@ module.exports = {
 
 				if (!songFound) {
 					console.log("Album " + album + " is of incorrect filetype, setting dummy.")
-					tags.push(dummystring);
+					tags.push([album, dummystring]);
 					continue;
 				}
 
@@ -95,7 +95,7 @@ module.exports = {
 				try {
 					var imageDataString = await this.getImageDataString(songPath)
 					//console.log(imageDataString)
-					tags.push(imageDataString)
+					tags.push([album, imageDataString])
 				} catch(ex) {
 					console.log(songPath + " could not be read.");
 					console.log(ex)
@@ -177,3 +177,6 @@ function _arrayBufferToBase64( buffer ) {
 	return Buffer.from(buffer).toString('base64')
 }
 
+function loadAlbumPage(albumAndArtist) {
+	console.log(albumAndArtist);
+}

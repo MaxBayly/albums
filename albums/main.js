@@ -77,31 +77,24 @@ async function getTestDataString() {
 // })
 
 ipcMain.on('asynchronous-message', async (event, arg) => {
-  let datastrings = [];
-  var datastring = await getTestDataString();
-  datastrings.push(datastring);
-  datastring = await scripts.getImageDataString('/mass/medix/Music/TesseracT/Polaris/01 Dystopia.mp3');
-  datastrings.push(datastring);
+  // let datastrings = [];
+  // var datastring = await getTestDataString();
+  // //console.log(datastring)
+  // datastrings.push(datastring);
+  // datastring = await scripts.getImageDataString('/mass/medix/Music/TesseracT/Polaris/01 Dystopia.mp3');
+  // datastrings.push(datastring);
 
   var tags = await scripts.traverseDirectories();
+  var baseString = '<div class="albumDiv"><img id="album" class="albumContainer" onclick="loadAlbumPage(' + "'testing'" + ')" src='
   var html = ""
   for (tag of tags) {
-    var innerString = "data:image/jpeg;base64," + tag;
-    var imageHTML = '<div class="albumDiv"><img id="album" class="albumContainer" src=' + innerString + "></div>"
+    var argString = "'" + tag[0] + "'"
+    var innerString = "data:image/jpeg;base64," + tag[1];
+    var imageHTML = '<div class="albumDiv"><img id="album" class="albumContainer" onclick="loadAlbumPage(' + argString + ')" src=' + innerString + "></div>"
+   // console.log(imageHTML)
     html += imageHTML
   }
-  //tags.pop()
-  // console.log("THESE ARE THE TAGS")
-  // for (const tag of tags){
-  //   console.log(tag)
-  // }
 
-  // console.log("FIRTST TAG")
-  // console.log(tags[0])
-  // console.log("LAST TAG")
-  // console.log(tags[tags.length-1])
-  // console.log("AND WE'RE DONE")
-  
-  
+  console.log(tags.length + " albums loaded")
   event.reply('asynchronous-reply', html);
 })
