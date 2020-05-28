@@ -177,6 +177,20 @@ function _arrayBufferToBase64( buffer ) {
 	return Buffer.from(buffer).toString('base64')
 }
 
-function loadAlbumPage(albumAndArtist) {
+function loadAlbumPage(albumAndArtist, datastring) {
 	console.log(albumAndArtist);
+	// const { remote } = require('electron');
+	// const { BrowserWindow } = remote;
+	// let window = BrowserWindow.getCurrentWindow()
+	// window.loadFile('albumView.html')
+	const { ipcRenderer } = require('electron');
+	ipcRenderer.send('loadAlbum', [albumAndArtist, datastring]);
+
+	ipcRenderer.on('albumLoaded', (event, arg) => {
+		console.log("REPLY IS HERE");
+		//console.log(albumStore.get('albumAndArtist'))
+		//document.getElementById("albumSquare").innerHTML += "<h1>ADDED</h1>";
+
+    })
+
 }

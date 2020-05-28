@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Album view</title>
+    <!-- https://electronjs.org/docs/tutorial/security#csp-meta-tag -->
+  <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline';" />
+  <link rel="stylesheet" href="styles.css">
+  <script src="scripts.js"></script>
+  <script>
+	const { ipcRenderer } = require('electron')
+
+	ipcRenderer.send('renderAlbum', 'ping')
+
+	ipcRenderer.on('albumRendered', (event, arg) => {
+		console.log(arg);
+		var htmlString = '<img src="data:image/jpeg;base64,' + arg[1] + '">'
+		console.log(htmlString)
+		document.getElementById("albumSquare").innerHTML = htmlString
+})
+  </script>
+  </head>
+  <body>
+    <div class="albumSquare" id="albumSquare">
+		<h1>ALBUMVIEW</h1>
+    </div>	
+  </body>
+</html>

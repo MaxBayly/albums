@@ -1,6 +1,7 @@
 const scripts = require('./scripts')
 const { app, BrowserWindow, webContents, ipcMain } = require('electron')
-
+const Store = require('electron-store');
+const albumStore = new Store();
 
 
 require('electron-reload')(__dirname);
@@ -15,6 +16,7 @@ function createWindow () {
 	  "webSecurity": false
     }
   })
+
 
   // and load the index.html of the app.
   win.loadFile('index.html')
@@ -88,7 +90,7 @@ ipcMain.on('asynchronous-message', async (event, arg) => {
   var baseString = '<div class="albumDiv"><img id="album" class="albumContainer" onclick="loadAlbumPage(' + "'testing'" + ')" src='
   var html = ""
   for (tag of tags) {
-    var argString = "'" + tag[0] + "'"
+    var argString = "'" + tag[0] + "','" + tag[1] + "'";
     var innerString = "data:image/jpeg;base64," + tag[1];
     var imageHTML = '<div class="albumDiv"><img id="album" class="albumContainer" onclick="loadAlbumPage(' + argString + ')" src=' + innerString + "></div>"
    // console.log(imageHTML)
@@ -98,3 +100,27 @@ ipcMain.on('asynchronous-message', async (event, arg) => {
   console.log(tags.length + " albums loaded")
   event.reply('asynchronous-reply', html);
 })
+
+ipcMain.on('loadAlbum', async (event, arg) => {
+  contents = webContents.getFocusedWebContents();
+  contents.loadFile("albumView.html")
+  albumStore.set('currentAlbum', arg)
+  event.reply('albumLoaded', arg);
+})
+
+ipcMain.on('renderAlbum', async (event, arg) => {
+  var album = await albumStore.get('currentAlbum');
+  
+
+
+  event.reply('albumRendered', album);
+})
+
+
+// function loadAlbumPage(albumAndArtist) {
+//   console.log(albumAndArtist);
+//   const { webContents } = require('electron');
+// 	console.log(mainWindow)
+  
+// 	//console.log(window)
+// }
