@@ -24,3 +24,6 @@ Upon song change:
 	- Find `song` with id corresponding to `prevSong` 
 	- Set class to remove `playing` (`element.setAttribute('class', "song")`)
 
+MPD command protocol: https://www.musicpd.org/doc/html/protocol.html#playback-options
+
+Of particular note are the `add` and `delete` commands
