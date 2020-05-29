@@ -8,9 +8,12 @@ require('electron-reload')(__dirname);
 
 function createWindow () {
   // Create the browser window.
+  //sleep(1000)
+  
   const win = new BrowserWindow({
     width: 800,
     height: 600,
+    transparent: true,
     webPreferences: {
 	  nodeIntegration: true,
 	  "webSecurity": false
@@ -24,7 +27,7 @@ function createWindow () {
   //windowReady(win);
 
   // Open the DevTools.
-  win.webContents.openDevTools()
+  //win.webContents.openDevTools()
 
   win.removeMenu()
 }
@@ -32,7 +35,13 @@ function createWindow () {
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
-app.whenReady().then(createWindow)
+// app.whenReady().then(createWindow)
+
+app.on('ready', function () {
+  setTimeout(function() {
+      createWindow();
+  }, 300);
+});
 
 // Quit when all windows are closed.
 app.on('window-all-closed', () => {
@@ -56,27 +65,12 @@ app.on('activate', () => {
 //let test = scripts.readTags()
 
 
-
-async function windowReady(window) {
-  let datastring = await scripts.displayTestImage();
-  //console.log(datastring)
-  console.log("TESTING")
-  //window.loadFile('test.html')
-  return datastring
-}
-
 async function getTestDataString() {
   var datastring = await scripts.displayTestImage();
   //console.log(typeof(datastring))
   return datastring;
 }
 
-// ipcMain.on('synchronous-message', (event, arg) => {
-//   console.log(arg);
-//   datastring = getTestDataString()
-//   console.log(datastring)
-//   event.returnValue = "teststring"
-// })
 
 ipcMain.on('asynchronous-message', async (event, arg) => {
   // let datastrings = [];
@@ -124,3 +118,7 @@ ipcMain.on('renderAlbum', async (event, arg) => {
   
 // 	//console.log(window)
 // }
+
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}

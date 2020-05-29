@@ -1,10 +1,19 @@
+body {
+	margin: 0px;
+	background-color: #333;
+}
+
+body::-webkit-scrollbar {
+	display: none;
+}
+
 .albumGrid {
 	display: flex;
 	justify-content: start;
 	flex-direction: row;
 	flex-wrap: wrap;
 	align-content: stretch;
-  }
+}
 
 .albumDiv {
 	width: 12.5%;
@@ -13,12 +22,70 @@
 }
 
 
-img {
+.albumDiv img {
 	width: 100%;
 	min-width: 500px;
 	height: 100%;
 }
 
-body::-webkit-scrollbar {
-	display: none;
+
+
+.flexContainer {
+	display: flex;
+	flex-direction: row;
+	justify-content: start;
+	align-content: center;
+	height: 100%;
+	position: absolute;
+}
+
+.albumSquare {
+	height: 100%;
+
+}
+
+.albumSquare img {
+	height: 100%;
+}
+
+.albumInformation {
+	margin-left: 70px;
+	margin-top: 70px;
+
+}
+
+.artist {
+	font-size: 30px;
+	font-family: montserrat;
+	color: #FFF;
+}
+
+.album {
+	margin-top: 10px;
+	font-size: 50px;
+	font-family: montserrat;
+	color: #FFF;
+}
+
+.songs {
+	margin-top: 80px;
+	font-size: 20px;
+	font-family: montserrat;
+	color: #FFF;
+}
+
+.song {
+	margin-top: 30px;
+}
+
+.playing {
+	font-style: oblique;
+	font-weight: bold;
+}
+
+
+
+@font-face {
+	font-family: montserrat;
+	src: url(Montserrat-Regular.ttf);
 }
