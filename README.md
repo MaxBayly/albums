@@ -1,7 +1,7 @@
 # Albums
 ## Screenshots
 ### Main album grid
-![albumgrid](https://github.com/MaxBayly/albums/blob/master/screenshots/albumsagain.png)
+![albumgrid](https://github.com/MaxBayly/albums/blob/master/screenshots/grid.png)
 ### Album view 
 ![albumView](https://github.com/MaxBayly/albums/blob/master/screenshots/italicsexample.png)
 ## Currently extremely experimental (slow, incomplete)
