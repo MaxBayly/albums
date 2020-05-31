@@ -13,22 +13,28 @@
 	ipcRenderer.send('renderAlbum', 'ping')
 
 	ipcRenderer.on('albumRendered', (event, arg) => {
-		console.log(arg);
-		var htmlString = '<img src="data:image/jpeg;base64,' + arg[1] + '">'
-		console.log(htmlString)
-		document.getElementById("albumSquare").innerHTML = htmlString
-})
+		//console.log(arg);
+		// var htmlString = '<img src="data:image/jpeg;base64,' + albumDict.get(arg) + '">'
+		// console.log(htmlString)
+		document.getElementById("albumSquare").innerHTML = arg;
+  })
+
+  ipcRenderer.send('renderSongs');
+  ipcRenderer.on('songsFetched', (event, arg) => {
+    console.log(arg)
+    document.getElementById("albumInformation").innerHTML = arg;
+  })
   </script>
   </head>
   <body>
     <div class="flexContainer">
       <div class="albumSquare" id="albumSquare">
       </div>
-      <div class="albumInformation">
-        <div class="artist">
+      <div class="albumInformation", id="albumInformation">
+        <!-- <div onClick="goBack()" class="artist">
           VOLA
         </div>
-        <div class="album">
+        <div onClick="goBack()" class="album">
           Inmazes
         </div>
         <div class="songs">
@@ -62,7 +68,7 @@
           <div id="10" class="song">
              Inmazes
           </div>
-        </div>
+        </div> -->
       </div>
       
   </div>

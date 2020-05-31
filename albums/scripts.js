@@ -22,23 +22,12 @@ module.exports = {
 	displayTestImage: async function (){
 	var filename = "/mass/medix/Music/Porcupine Tree/Fear of a Blank Planet/01 Fear of a Blank Planet.flac"
 	var tag = await readTags(filename);
-	
-	//console.log("display");
-	//console.log(tag);
-	//console.log("WTF");
 	var imageDataString = extractImage(tag);
-	//console.log("BETWEEN");
-	displayImage(imageDataString);
-	//console.log("END");
 	return imageDataString;
 	},
 
 	getImageDataString: async function(filename){
 		var tag = await readTags(filename);
-		// if (tag == null) {
-		// 	console.log("SETTING " + filename + " TO DUMMY")
-		// 	return "ABCDE"
-		// }
 		var imageDataString = extractImage(tag);
 		return imageDataString;
 	},
@@ -55,25 +44,20 @@ module.exports = {
 		artists.forEach(artist => {
 			if (artist != "beets") {
 				try {
-					//console.log(rootDirectory + artist)
 					var albums = fs.readdirSync(rootDirectory + artist)
 					albums.forEach(album => {
 						albumList.push(artist + '/' + album);
 					})
-					//console.log(albums)
 				} catch(ex) {
 					console.log(artist + " could not be read.")
 					console.log(ex)
 				}
 			}
 		})
-		//console.log(albumList)
 
 		for (const album of albumList) {
-			//console.log(album)
 			try {
 				var songs = fs.readdirSync(rootDirectory + album)
-				//var songPath = rootDirectory + album + '/' + songs[0];
 				var firstSong;
 				var songFound = false;
 				for (song of songs) {
@@ -85,45 +69,51 @@ module.exports = {
 				}
 
 				if (!songFound) {
-					console.log("Album " + album + " is of incorrect filetype, setting dummy.")
+					//console.log("Album " + album + " is of incorrect filetype, setting dummy.")
 					tags.push([album, dummystring]);
 					continue;
 				}
 
 				var songPath = rootDirectory + album + '/' + firstSong;
-				//console.log(song)
 				try {
 					var imageDataString = await this.getImageDataString(songPath)
-					//console.log(imageDataString)
 					tags.push([album, imageDataString])
 				} catch(ex) {
 					console.log(songPath + " could not be read.");
 					console.log(ex)
 				}
 				;
-				//console.log(songPath)
 			} catch(ex) {
 				//console.log(album + ": could not fetch image.")
 				//console.log(ex)
 			}
 		}
 		return tags;
+	},
+
+	getAlbumSongs: async function (albumAndArtist){
+		console.log("getting songs...")
+		var path = "/mass/medix/Music/" + albumAndArtist;
+		let songs = fs.readdirSync(path);
+		var album = "";
+
+		var songInfo = [];
+
+		for (song of songs) {
+			if (song.charAt(0) != "." && song.substr(song.indexOf('.')) != ".jpg" && song.substr(song.indexOf('.')) != ".png" && song.substr(song.indexOf('.')) != ".aiff" && song.substr(song.indexOf('.')) != ".aif") {
+				var tags = await readTags(path + "/" + song);
+				album = tags.tags.album;
+				songInfo.push([tags.tags.title, tags.tags.track])
+			} else {
+				console.log("NOT GETTING DATA FOR " + song)
+			}
+			
+		}
+		console.log("done")
+		return  [songInfo, album];
 	}
 }
 
-// async function displayTestImage(){
-// 	var filename = "/mass/medix/Music/TesseracT/Sonder/01 Luminary.mp3"
-// 	var tag = await readTags(filename);
-	
-// 	//console.log("display");
-// 	//console.log(tag);
-// 	//console.log("WTF");
-// 	var imageDataString = extractImage(tag);
-// 	//console.log("BETWEEN");
-// 	displayImage(imageDataString);
-// 	//console.log("END");
-// 	return true;
-// }
 
 async function readTags(filename) {
 	var jsmediatags = require("jsmediatags");
@@ -131,8 +121,6 @@ async function readTags(filename) {
 	return new Promise(function(resolve, reject) {
 		jsmediatags.read(filename, {
 			onSuccess: function(tag) {
-				//console.log("read")
-				//console.log(tag)
 				resolve(tag)
 				
 			},
@@ -152,18 +140,12 @@ function extractImage(tag) {
 	try {
 		var img = tag.tags.picture
 		var datastring = _arrayBufferToBase64(img.data)
-		//console.log(datastring)
 		return datastring
 	} catch(ex) {
-		//console.log(tag)
-		console.log("Image for " + tag.tags.album + " could not be found in file, using dummy")
+		//console.log("Image for " + tag.tags.album + " could not be found in file, using dummy")
 		return dummystring
 	}
 
-}
-
-function displayImage(datastring) {
-	//document.getElementById("itemPreview").src = "data:image/jpeg;base64,"+ datastring
 }
 
 function _arrayBufferToBase64( buffer ) {
@@ -177,20 +159,40 @@ function _arrayBufferToBase64( buffer ) {
 	return Buffer.from(buffer).toString('base64')
 }
 
-function loadAlbumPage(albumAndArtist, datastring) {
+async function loadAlbumPage(albumAndArtist, datastring) {
 	console.log(albumAndArtist);
+	//console.log(albumDict.get(albumAndArtist));
 	// const { remote } = require('electron');
 	// const { BrowserWindow } = remote;
 	// let window = BrowserWindow.getCurrentWindow()
 	// window.loadFile('albumView.html')
 	const { ipcRenderer } = require('electron');
-	ipcRenderer.send('loadAlbum', [albumAndArtist, datastring]);
+	ipcRenderer.send('loadAlbum', albumAndArtist);
 
-	ipcRenderer.on('albumLoaded', (event, arg) => {
-		console.log("REPLY IS HERE");
-		//console.log(albumStore.get('albumAndArtist'))
-		//document.getElementById("albumSquare").innerHTML += "<h1>ADDED</h1>";
+	ipcRenderer.on('albumLoaded', (event, reply) => {
+		console.log(reply)
+		document.getElementById("albumInformation").innerHTML = reply;
+	})
 
-    })
 
+}
+
+function goBack(){
+	const { ipcRenderer} = require('electron');
+	ipcRenderer.send('loadGrid');
+	ipcRenderer.on('gridLoaded', (event, reply) => {
+		console.log(reply)
+	})
+}
+
+function playAlbum() {
+	const { ipcRenderer } = require('electron');
+	ipcRenderer.send('playCurrentAlbum');
+	ipcRenderer.on('albumPlaying', (event, reply) => {
+		console.log(reply)
+	})
+}
+
+function playSong() {
+	return true;
 }

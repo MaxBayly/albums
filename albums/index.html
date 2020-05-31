@@ -11,32 +11,17 @@
   <script>
     const { ipcRenderer } = require('electron')
 
-    // console.log(ipcRenderer)
+    ipcRenderer.send('load-images', 'ping')
 
-    // var testString = ipcRenderer.sendSync('synchronous-message', 'TESTARG');
-
-    // console.log(testString);
-
-    ipcRenderer.send('asynchronous-message', 'ping')
-
-    ipcRenderer.on('asynchronous-reply', (event, arg) => {
-        console.log(arg);
-        //displayImage(arg);
-        // document.getElementById("itemPreview").src = "data:image/jpeg;base64,"+ arg[0]
-        // for(var i = 0; i < arg.length; i++){
-        //   var innerString = "data:image/jpeg;base64," + arg[i]
-        //   document.getElementById("itemPreview").innerHTML += "<img src=" + innerString + ">"
-        //   console.log("Next image... ")
-        // }
+    ipcRenderer.on('albums-loaded', (event, arg) => {
         document.getElementById("albumGrid").innerHTML = arg
-
     })
     
   </script>
   </head>
   <body>
     <div class="albumGrid" id="albumGrid">
-
+      <!-- album images go here -->
     </div>	
   </body>
 </html>

@@ -3,6 +3,10 @@ const { app, BrowserWindow, webContents, ipcMain } = require('electron')
 const Store = require('electron-store');
 const albumStore = new Store();
 
+var exec = require('child_process').exec, child;
+var albumDict = new Map();
+var albumsLoaded = false;
+
 
 require('electron-reload')(__dirname);
 
@@ -27,7 +31,7 @@ function createWindow () {
   //windowReady(win);
 
   // Open the DevTools.
-  //win.webContents.openDevTools()
+  win.webContents.openDevTools()
 
   win.removeMenu()
 }
@@ -72,42 +76,90 @@ async function getTestDataString() {
 }
 
 
-ipcMain.on('asynchronous-message', async (event, arg) => {
+ipcMain.on('load-images', async (event, arg) => {
   // let datastrings = [];
   // var datastring = await getTestDataString();
   // //console.log(datastring)
   // datastrings.push(datastring);
   // datastring = await scripts.getImageDataString('/mass/medix/Music/TesseracT/Polaris/01 Dystopia.mp3');
   // datastrings.push(datastring);
+  console.log("Loading albums...")
 
-  var tags = await scripts.traverseDirectories();
-  var baseString = '<div class="albumDiv"><img id="album" class="albumContainer" onclick="loadAlbumPage(' + "'testing'" + ')" src='
-  var html = ""
-  for (tag of tags) {
-    var argString = "'" + tag[0] + "','" + tag[1] + "'";
-    var innerString = "data:image/jpeg;base64," + tag[1];
-    var imageHTML = '<div class="albumDiv"><img id="album" class="albumContainer" onclick="loadAlbumPage(' + argString + ')" src=' + innerString + "></div>"
-   // console.log(imageHTML)
-    html += imageHTML
+  if (!albumsLoaded){
+    var tags = await scripts.traverseDirectories();
+    //var baseString = '<div class="albumDiv"><img id="album" class="albumContainer" onclick="loadAlbumPage(' + "'testing'" + ')" src='
+    var html = ""
+    for (tag of tags) {
+      albumDict.set(tag[0], tag[1])
+      var argString = "'" + tag[0] + "'";
+      var innerString = "data:image/jpeg;base64," + tag[1];
+      var imageHTML = '<div class="albumDiv"><img id="album" class="albumContainer" onclick="loadAlbumPage(' + argString + ')" src=' + innerString + "></div>"
+      html += imageHTML
+    }
+    albumStore.set('html', html);
+    albumsLoaded = true;
+    console.log(tags.length + " albums loaded");
+  } else {
+    var html = albumStore.get('html');
   }
 
-  console.log(tags.length + " albums loaded")
-  event.reply('asynchronous-reply', html);
+  event.reply('albums-loaded', html);
 })
 
-ipcMain.on('loadAlbum', async (event, arg) => {
+ipcMain.on('loadAlbum', async (event, albumAndArtist) => {
   contents = webContents.getFocusedWebContents();
   contents.loadFile("albumView.html")
-  albumStore.set('currentAlbum', arg)
-  event.reply('albumLoaded', arg);
+
+  albumStore.set('currentAlbum', albumAndArtist);
+  event.reply('albumLoaded', 'loaded album');
 })
 
 ipcMain.on('renderAlbum', async (event, arg) => {
   var album = await albumStore.get('currentAlbum');
+  var htmlString = '<img onClick="playAlbum()" src="data:image/jpeg;base64,' + albumDict.get(album) + '">'
+
+
+  event.reply('albumRendered', htmlString);
+})
+
+ipcMain.on('renderSongs', async (event, arg) => {
+  var albumAndArtist = albumStore.get('currentAlbum');
+  var info = await scripts.getAlbumSongs(albumAndArtist);
+  var artist = albumAndArtist.substr(0, albumAndArtist.indexOf('/'));
+  var songs = info[0];
+  var album = info[1];
   
+  var artistHTML = '<div onClick="goBack()" class="artist">' + artist 
+  var albumHTML = '<div onClick="goBack()" class="album">' + album
+  var songsHTML = '<div class="songs">'
 
+  for (song of songs) {
+    var songHTML = '<div id="' + song[1] + '" class="song">' + song[0] + '</div>';
+    songsHTML += songHTML;
+  }
+  songsHTML += '</div>';
+  var html = artistHTML + albumHTML + songsHTML;
 
-  event.reply('albumRendered', album);
+  event.reply('songsFetched', html);
+})
+
+ipcMain.on('loadGrid', async(event, arg) => {
+  contents = webContents.getFocusedWebContents();
+  contents.loadFile("index.html");
+  event.reply('gridLoaded', "album grid loaded");
+})
+
+ipcMain.on('playCurrentAlbum', async(event, arg) => {
+  var execString = 'mpc clear && mpc ls "' + albumStore.get('currentAlbum') + '" | mpc add && mpc play'
+	
+	child = exec(execString,
+    function (error, stdout, stderr) {
+        console.log('stdout: ' + stdout);
+        console.log('stderr: ' + stderr);
+        if (error !== null) {
+             console.log('exec error: ' + error);
+        }
+    });
 })
 
 
