@@ -4,7 +4,7 @@
   "description": "An album-based music library browser and player for MPD",
   "main": "main.js",
   "scripts": {
-    "start": "electron . --allow-file-access-from-files --enable-transparent-visuals --disable-gpu"
+    "start": "electron . --allow-file-access-from-files --enable-transparent-visuals"
   },
   "author": "Max Bayly",
   "license": "GPL-3.0-or-later",
