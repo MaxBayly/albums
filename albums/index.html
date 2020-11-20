@@ -16,6 +16,12 @@
     ipcRenderer.on('albums-loaded', (event, arg) => {
         document.getElementById("albumGrid").innerHTML = arg
     })
+
+    // ipcRenderer.send('mpdListen', 'msg');
+
+    // ipcRenderer.on('mpdUpdate', (event, arg) => {
+
+    // })
     
   </script>
   </head>

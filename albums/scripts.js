@@ -130,7 +130,7 @@ async function readTags(filename) {
 				console.log(filename.substr(filename.indexOf('.')))
 				resolve(dummystring);
 			}
-			});
+		});
 	});
 
 	

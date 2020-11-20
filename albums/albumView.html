@@ -21,9 +21,10 @@
 
   ipcRenderer.send('renderSongs');
   ipcRenderer.on('songsFetched', (event, arg) => {
-    console.log(arg)
+    //console.log(arg)
     document.getElementById("albumInformation").innerHTML = arg;
   })
+  
   </script>
   </head>
   <body>
@@ -73,4 +74,41 @@
       
   </div>
   </body>
+  <!-- <script>
+    window.onload = function() {
+      var net = require('net');
+
+      var server = net.createServer(function(connection) {
+        connection.on('data', function(data) {
+            // data is a Buffer, so we'll .toString() it for this example
+            console.log(data.toString());
+            document.getElementById('1').innerHTML = "TESTING";
+        });
+      });
+      
+      // This creates a UNIX socket in the current directory named "nodejs_bridge.sock"
+      try {
+        server.listen('electron_mpc.sock');
+        console.log('Creating socket...')
+      } catch(ex) {
+        console.log("Socket already exists.")
+        console.log(ex)
+      }
+
+
+      // Make sure we close the server when the process exits so the file it created is removed
+      process.on('exit', function() {
+        server.close();
+      });
+      
+      // Call process.exit() explicitly on ctl-c so that we actually get that event
+      process.on('SIGINT', function() {
+        process.exit();
+      });
+      
+      // Resume stdin so that we don't just exit immediately
+      process.stdin.resume();
+    }
+
+  </script> -->
 </html>

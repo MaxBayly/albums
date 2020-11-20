@@ -9,29 +9,7 @@ var exec = require('child_process').exec, child;
 var albumDict = new Map();
 var albumsLoaded = false;
 
-
-var server = net.createServer(function(connection) {
-  connection.on('data', function(data) {
-      // data is a Buffer, so we'll .toString() it for this example
-      console.log(data.toString());
-  });
-});
-
-// This creates a UNIX socket in the current directory named "nodejs_bridge.sock"
-server.listen('electron_mpc.sock');
-
-// Make sure we close the server when the process exits so the file it created is removed
-process.on('exit', function() {
-  server.close();
-});
-
-// Call process.exit() explicitly on ctl-c so that we actually get that event
-process.on('SIGINT', function() {
-  process.exit();
-});
-
-// Resume stdin so that we don't just exit immediately
-process.stdin.resume();
+var socketCreated = false;
 
 
 require('electron-reload')(__dirname);
@@ -186,6 +164,34 @@ ipcMain.on('playCurrentAlbum', async(event, arg) => {
              console.log('exec error: ' + error);
         }
     });
+})
+
+ipcMain.on('mpdListen', async(event, arg) => {
+  var server = net.createServer(function(connection) {
+    connection.on('data', function(data) {
+        // data is a Buffer, so we'll .toString() it for this example
+        console.log(data.toString());
+    });
+  });
+  
+  // This creates a UNIX socket in the current directory named "nodejs_bridge.sock"
+  if (!socketCreated) {
+    server.listen('electron_mpc.sock');
+    socketCreated = true;
+  }
+
+  // Make sure we close the server when the process exits so the file it created is removed
+  process.on('exit', function() {
+    server.close();
+  });
+  
+  // Call process.exit() explicitly on ctl-c so that we actually get that event
+  process.on('SIGINT', function() {
+    process.exit();
+  });
+  
+  // Resume stdin so that we don't just exit immediately
+  process.stdin.resume();
 })
 
 
