@@ -9,7 +9,7 @@
   "author": "Max Bayly",
   "license": "GPL-3.0-or-later",
   "dependencies": {
-    "electron": "^9.0.0",
+    "electron": "^11.5.0",
     "electron-reload": "^1.5.0",
     "electron-store": "^5.1.1",
     "jsmediatags": "^3.9.3",
